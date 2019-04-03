@@ -4,6 +4,8 @@ ELSE()
   CMAKE_MINIMUM_REQUIRED(VERSION 3.2)
 ENDIF()
 
+include(RezBuild)
+
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 include(OpenEXRVersion)

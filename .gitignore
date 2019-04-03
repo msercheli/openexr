@@ -24,3 +24,5 @@ missing
 build-win/
 build-nuget/
 *~
+/build
+/.vscode/ipch
