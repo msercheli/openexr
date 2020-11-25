@@ -1,22 +1,42 @@
-OpenEXR
-=======
+[![License](https://img.shields.io/github/license/AcademySoftwareFoundation/openexr)](LICENSE.md)
+[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/2799/badge)](https://bestpractices.coreinfrastructure.org/projects/2799)
+[![Build Status](https://github.com/AcademySoftwareFoundation/openexr/workflows/CI/badge.svg)](https://github.com/AcademySoftwareFoundation/openexr/actions?query=workflow%3ACI)
+[![Analysis Status](https://github.com/AcademySoftwareFoundation/openexr/workflows/Analysis/badge.svg)](https://github.com/AcademySoftwareFoundation/openexr/actions?query=workflow%3AAnalysis)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=AcademySoftwareFoundation_openexr&metric=alert_status)](https://sonarcloud.io/dashboard?id=AcademySoftwareFoundation_openexr)
 
-**OpenEXR** is a high dynamic-range (HDR) image file format developed
-by Industrial Light & Magic (ILM) for use in computer imaging
-applications. It supports stereoscopic and deep images.  Weta Digital,
-Walt Disney Animation Studios, Sony Pictures Imageworks, Pixar
-Animation Studios, DreamWorks, and other studios, companies, and
-individuals have made contributions to the code base. The file format
-has seen wide adoption in a number of industries.
+# OpenEXR
 
-OpenEXR's features include:
+<img align="right" src="/OpenEXR/doc/images/windowExample1.png">
 
-* Higher dynamic range and color precision than existing 8- and 10-bit
-  image file formats.
+OpenEXR provides the specification and reference implementation of the
+EXR file format, the professional-grade image storage format of the
+motion picture industry.
+
+The purpose of EXR format is to accurately and efficiently represent
+high-dynamic-range scene-linear image data and associated metadata,
+with strong support for multi-part, multi-channel use cases.
+
+OpenEXR is widely used in host application software where accuracy is
+critical, such as photorealistic rendering, texture access, image
+compositing, deep compositing, and DI.
+
+### About OpenEXR
+
+OpenEXR is a project of the [Academy Software
+Foundation](https://www.aswf.io).  The format and library were
+originally developed by Industrial Light & Magic and first released
+in 2003.  Weta Digital, Walt Disney Animation Studios, Sony Pictures
+Imageworks, Pixar Animation Studios, DreamWorks, and other studios,
+companies, and individuals have made contributions to the code base.
+
+OpenEXR is included in the [VFX Reference
+Platform](https://vfxplatform.com).
+
+### OpenEXR Features
+
+* High dynamic range and color precision.
 * Support for 16-bit floating-point, 32-bit floating-point, and
-  32-bit integer pixels. The 16-bit floating-point format, called "half",
-  is compatible with the half data type in NVIDIA's Cg graphics language
-  and is supported natively on their GPUs.
+  32-bit integer pixels.
 * Multiple image compression algorithms, both lossless and lossy. Some of
   the included codecs can achieve 2:1 lossless compression ratios on images
   with film grain.  The lossy codecs have been tuned for visual quality and
@@ -39,164 +59,109 @@ OpenEXR's features include:
   namespaces to provide protection when using multiple versions of the
   library in the same process space.
 
-License
--------
+### The IlmBase Library
 
-OpenEXR, including all contributions, is released under a modified BSD
-license. Please see the ``LICENSE`` file accompanying the distribution
-for the legal fine print.
-      
-OpenEXR Sub-modules
--------------------
+Also a part of OpenEXR, the IlmBase library is a basic, light-weight,
+and efficient representation of 2D and 3D vectors and matrices and
+other simple but useful mathematical objects, functions, and data
+types common in computer graphics applications, including the “half”
+16-bit floating-point type. 
 
-The OpenEXR distribution consists of the following sub-modules:
+### Supported Platforms
 
-* **IlmBase** - Utility libraries from Industrial Light & Magic: Half, Imath, Iex, IlmThread.
-* **PyIlmBase** - Python bindings for the IlmBase libraries.
-* **OpenEXR** - The core image library.
-* **OpenEXR_Viewers** - Standard image viewing programs
-* **Contrib** - Various plugins and utilities, contributed by the community.
-    
-Please see the ``README`` files of each of the individual directories for more information.
+OpenEXR builds on Linux, macOS, Microsoft Windows, and is
+cross-compilable on other systems.
 
-A collection of OpenEXR images is available from the adjacent repository
-[openexr-images](https://github.com/openexr/openexr-images).
+### OpenEXR Project Mission
 
-Dependencies
-------------
+The goal of the OpenEXR project is to keep the EXR format reliable and
+modern and to maintain its place as the preferred image format for
+entertainment content creation. 
 
-OpenEXR depends on [zlib](https://zlib.net).
+Major revisions are infrequent, and new features will be carefully
+weighed against increased complexity.  The principal priorities of the
+project are:
 
-PyIlmBase depends on [boost-python](https://github.com/boostorg/python) and
-optionally on [numpy](http://www.numpy.org).
+* Robustness, reliability, security
+* Backwards compatibility, data longevity
+* Performance - read/write/compression/decompression time
+* Simplicity, ease of use, maintainability
+* Wide adoption, multi-platform support - Linux, Windows, macOS, and others
 
-In OpenEXR_Viewers:
+OpenEXR is intended solely for 2D data. It is not appropriate for
+storage of volumetric data, cached or lit 3D scenes, or more complex
+3D data such as light fields.
 
-* **exrdisplay** depends on [fltk](http://www.fltk.org/index.php)
-* **playexr** depends on [Cg](https://developer.nvidia.com/cg-toolkit)
+The goals of the IlmBase project are simplicity, ease of use,
+correctness and verifiability, and breadth of adoption. IlmBase is not
+intended to be a comprehensive linear algebra or numerical analysis
+package.
 
-Web Resources
--------------
+### OpenEXR Project Governance
 
-Main web page: http:://www.openexr.org
+OpenEXR is hosted by the Academy Software Foundation. See
+[GOVERNANCE](GOVERNANCE.md) for more information about how the project
+operates.
 
-GitHub repository: http://www.github.com/openexr
+The OpenEXR project is dedicated to promoting a harassment-free
+community. Read our [code of conduct](CODE_OF_CONDUCT.md).
 
-Mail lists:
+## Developer Quick Start
 
-* **http://lists.nongnu.org/mailman/listinfo/openexr-announce** - OpenEXR-related announcements.
+See [INSTALL](INSTALL.md) for instructions on downloading and building OpenEXR
+from source.
 
-* **http://lists.nongnu.org/mailman/listinfo/openexr-user** - for discussion about OpenEXR applications or general questions.
+## Resources
 
-* **http://lists.nongnu.org/mailman/listinfo/openexr-devel** - for developers using OpenEXR in their applications.
+* Website: http://www.openexr.com
 
-Building and Installation
--------------------------
+* GitHub repository: http://www.github.com/AcademySoftwareFoundation/openexr
 
-Download the latest release of OpenEXR from
-http://www.openexr.com/downloads.html.
+* Documentation: http://www.openexr.com/documentation.html.
 
-To build the OpenEXR binaries from source, compile and install the
-individual sub-models (IlmBase, PyIlmBase, OpenEXR, OpenEXR_Viewers),
-according to the instructions in the respective ``README``
-files. Build and install the IlmBase module first, then build and
-install the OpenEXR module. Optionally, then build and install
-PyIlmBase, OpenEXR_Viewers, and Contrib.
+* Reference images: https://github.com/AcademySoftwareFoundation/openexr-images.
 
-For the basic installation:
+### Getting Help
 
-    cd <source root>/IlmBase
-    ./configure
-    make
-    make install
+There are two primary ways to connect with the OpenEXR project:
 
-    cd <source root>/OpenEXR
-    ./configure
-    make 
-    make install
+* The openexr-dev@lists.aswf.io mail list: This is a development
+  focused mail list with a deep history of technical conversations and
+  decisions that have shaped the project. Subscribe at
+  [openexr-dev@lists.aswf.io](https://lists.aswf.io/g/openexr-dev).
 
-See the module ``README`` files for options to ``configure``.
+* GitHub Issues: GitHub issues are used both to track bugs and to
+  discuss feature requests.
 
-#### Building from Git
+See [CONTRIBUTING](CONTRIBUTING.md) for more information.
 
-Alternatively, you can download the latest release or the lastest
-development branch directly from http://github.com/openexr.
+### Getting Involved
 
-After cloning the repo locally, generate the configuration scripts by
-running the ``bootstrap`` script:
+OpenEXR welcomes contributions to the project. See
+[CONTRIBUTING](CONTRIBUTING.md) for more information about
+contributing to OpenEXR.
 
-    cd <source root>/IlmBase
-    ./bootstrap
-    ./configure
-    make
-    make install
+## License
 
-    cd <source root>/OpenExr
-    ./bootstrap
-    ./configure
-    make
-    make install
+OpenEXR is released under the [BSD-3-Clause](LICENSE) license. See
+[PATENTS](PATENTS) for license information about portions of
+OpenEXR that are provided under a different license.
 
-Building from git and ``bootstrap`` requires that **autoconf** is
-installed.  Download and install it from
-https://www.gnu.org/software/autoconf/autoconf.html.
+## Frequently Asked Questions
 
-#### Building with CMake
+* "``pip install openexr`` doesn't work."
 
-Alternatively, you can build with **cmake**, version 3.11 or newer. 
+  The OpenEXR project provides python bindings for the Imath
+  vector/matrix classes, but it does *not* provide python bindings for
+  reading, writing, or editing .exr files.  The
+  [openexrpython](https://github.com/jamesbowman/openexrpython) module
+  is not affiliated with the OpenEXR project or the ASWF. Please
+  direct questions there.
 
-In the root ``CMakeLists.txt`` file, with -D options on the cmake
-line, or by using a tools such as **ccmake** or **cmake-gui**,
-configure the OpenEXR build. The options are detailed below.
+  Alternatively,
+  [OpenImageIO](https://sites.google.com/site/openimageio/home) also
+  includes python bindings for OpenEXR.
 
-Create a source root directory, cd into it, and run **cmake** to configure
-the build.  Select an appropriate generator, such as "Unix Makefiles",
-or "Visual Studio 15 2017 Win64". Then run **make** a the root
-directory; this will build the appropriate submodules, according to
-the settings of the **cmake** options, described below.
+---
 
-    cmake -DCMAKE_INSTALL_PREFIX=<install location> <OpenEXR source root> -G "selected generator" -DCMAKE_PREFIX_PATH=<paths to dependencies - zlib etc>
-    make
-
-The available options are:
-
-* ``OPENEXR_BUILD_ILMBASE`` (ON)
-By default, IlmBase is always built.
-
-* ``OPENEXR_BUILD_OPENEXR`` (ON)
-By default, OpenEXR is always built.
-
-* ``OPENEXR_BUILD_PYTHON_LIBS`` (ON)
-By default, the Python bindings will be built.
-
-* ``OPENEXR_BUILD_VIEWERS`` (OFF)
-By default, the viewers are not built, as they have not been updated for
-modern OpenGL.
-
-* ``OPENEXR_BUILD_SHARED`` (ON)
-* ``OPENEXR_BUILD_STATIC`` (OFF)
-The build can be configured to create either shared libraries, or static 
-libraries, or both.
-
-* ``OPENEXR_NAMESPACE_VERSIONING`` (ON)
-OpenEXR symbols will be contained within a namespace
-
-* ``OPENEXR_FORCE_CXX03`` (OFF)
-C++03 compatibility is possible as an option
-
-* ``OPENEXR_ENABLE_TESTS`` (ON)
-By default, the tests will be built.
-
-* ``OPENEXR_RUN_FUZZ_TESTS`` (OFF)
-By default, the damaged input tests will NOT be run, due to their long
-running time. If you wish to run them as part of "make test" (or equivalent
-in your build system), then enable this. A "make fuzz" target will be
-available to run the fuzz test regardless.
-
-* ``OPENEXR_PYTHON_MAJOR``, ``OPENEXR_PYTHON_MINOR`` "2", "7"
-By default, OpenEXR is built against Python 2.7.x.
-
-## Documentation
-
-Documentation is available at http://www.openexr.com/documentation.html.
-
+![aswf](/ASWF/images/aswf.png)
