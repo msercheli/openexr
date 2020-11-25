@@ -1,92 +1,90 @@
-IF (WIN32)
-  CMAKE_MINIMUM_REQUIRED(VERSION 3.11)
-ELSE()
-  CMAKE_MINIMUM_REQUIRED(VERSION 3.2)
-ENDIF()
+# SPDX-License-Identifier: BSD-3-Clause
+# Copyright Contributors to the OpenEXR Project.
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-
-include(OpenEXRVersion)
-
-project(OpenEXR VERSION ${OPENEXR_VERSION})
-
-include(OpenEXRSettings)
-
-# Packages
-find_package(ZLIB)
-if(OPENEXR_BUILD_OPENEXR AND NOT ZLIB_FOUND)
-  message(WARNING "Make Zlib available to CMake's search path, and re-run configuration")
-  message(FATAL_ERROR "Zlib is a required dependency when OPENEXR_BUILD_OPENEXR is set")
-endif()
-
-if (OPENEXR_BUILD_PYTHON_LIBS)
-  find_package(PythonLibs ${OPENEXR_PYTHON_MAJOR}.${OPENEXR_PYTHON_MINOR})
-  if(NOT PythonLibs_FOUND)
-    message(WARNING "Make Python ${OPENEXR_PYTHON_MAJOR}.${OPENEXR_PYTHON_MINOR} available to CMake's search path, and re-run configuration")
-    message(FATAL_ERROR "Python is a required dependency when OPENEXR_BUILD_PYTHON_LIBS is set")
+# We require this to get object library link library support
+if(OPENEXR_BUILD_BOTH_STATIC_SHARED OR ILMBASE_BUILD_BOTH_STATIC_SHARED)
+  if (${CMAKE_VERSION} VERSION_LESS "3.12.0")
+    message(FATAL_ERROR "CMake 3.12 or newer is required for object library support when building both static and shared libraries")
   endif()
-
-  find_package(Boost COMPONENTS python${OPENEXR_PYTHON_MAJOR}${OPENEXR_PYTHON_MINOR})
-  if(NOT Boost_PYTHON${OPENEXR_PYTHON_MAJOR}${OPENEXR_PYTHON_MINOR}_FOUND)
-    message(WARNING "user provided Boost Python${OPENEXR_PYTHON_MAJOR}${OPENEXR_PYTHON_MINOR} was not found. Trying default path...")
-
-    find_package(Boost COMPONENTS python)
-    if(NOT Boost_PYTHON_FOUND)
-      message(WARNING "Make boost Python available to CMake's search path, and re-run configuration")
-      message(FATAL_ERROR "boost Python is a required dependency when OPENEXR_BUILD_PYTHON_LIBS is set")
-    endif()
-  endif()
-
-  find_package(NumPy)
-endif()
-
-if(OPENEXR_BUILD_VIEWERS)
-  message(WARNING "Viewers are currently out of order. Building anyway")
-  SET (FLTK_SKIP_FLUID 1)
-  find_package(FLTK)
-  if(NOT FLTK_FOUND)
-    message(WARNING "FLTK not found, exrdisplay will not be built")
-  endif()
-  find_package(OpenGL)
-  if(NOT OpenGL_FOUND)
-    message(WARNING "OpenGL not found, exrdisplay will not be built")
-  endif()
-endif()
-
-if ((OPENEXR_BUILD_OPENEXR OR OPENEXR_BUILD_UTILS OR OPENEXR_BUILD_TESTS OR OPENEXR_BUILD_PYTHON_LIBS OR OPENEXR_BUILD_VIEWERS) AND NOT(OPENEXR_BUILD_ILMBASE))
-  message(INFO "OPENEXR_BUILD_ILMBASE not requested, searching for installed IlmBase instead")
-  find_package(IlmBase)
-  if (NOT IlmBase_FOUND)
-    message(ERROR "Could not find IlmBase, cannot build dependent libraries.")
-    message(INFO, "Set ILMBASE_LOCATION to location of IlmBase.")
-  endif()
-endif()
-
-if ((OPENEXR_BUILD_UTILS OR OPENEXR_BUILD_TESTS OR OPENEXR_BUILD_VIEWERS) AND NOT(OPENEXR_BUILD_OPENEXR))
-  message(INFO "OPENEXR_BUILD_OPENEXR not requested, searching for installed OpenEXR instead")
-  find_package(OpenEXR)
-  if (NOT OpenEXR_FOUND)
-    message(ERROR "Could not find OpenEXR, cannot build dependent libraries.")
-    message(INFO, "Set OPENEXR_LOCATION to location of OpenEXR.")
-  endif()
-endif()
-
-# Perform the build
-if(OPENEXR_BUILD_ILMBASE)
-    add_subdirectory(IlmBase)
-endif()
-if(OPENEXR_BUILD_OPENEXR)
-    add_subdirectory(OpenEXR)
+  cmake_minimum_required(VERSION 3.12)
 else()
-    message(INFO, "Skipping OpenEXR build")
+  cmake_minimum_required(VERSION 3.10)
 endif()
-if(OPENEXR_BUILD_PYTHON_LIBS)
-    add_subdirectory(PyIlmBase)
-else()
-    message(INFO, "Skipping Python bindings")
+
+if(POLICY CMP0074)
+  cmake_policy(SET CMP0074 NEW)
 endif()
-if(OPENEXR_BUILD_VIEWERS AND FLTK_FOUND AND OpenGL_FOUND)
-    add_subdirectory(OpenEXR_Viewers)
-else()
-    message(INFO, "Skipping OpenEXR Viewers")
+
+#######################################
+# Create project and include cmake
+# configuration files
+#######################################
+
+include(cmake/OpenEXRVersion.cmake)
+
+project(OpenEXR VERSION ${OPENEXR_VERSION} LANGUAGES C CXX)
+
+include(cmake/LibraryDefine.cmake)
+include(cmake/OpenEXRSetup.cmake)
+add_subdirectory(cmake)
+
+# Hint: This can be set to enable custom find_package
+# search paths, probably best to set it when configuring
+# on the command line to cmake instead of setting it
+# here.
+###set(CMAKE_PREFIX_PATH "/prefix")
+
+#######################################
+# Add all source in subdirectories
+#######################################
+
+# Include these two modules without enable/disable options
+add_subdirectory(src/lib)
+add_subdirectory(src/bin)
+
+# Tell CMake where to find the OpenEXRConfig.cmake file. Makes it posible to call
+# find_package(OpenEXR) in downstream projects
+set(OpenEXR_DIR "${CMAKE_CURRENT_BINARY_DIR}/cmake" CACHE PATH "" FORCE)
+# Add an empty OpenEXRTargets.cmake file for the config to use.
+# Can be empty since we already defined the targets in add_subdirectory
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/cmake/OpenEXRTargets.cmake" "# Dummy file")
+
+option(INSTALL_OPENEXR_EXAMPLES "Install OpenEXR examples" ON)
+if(INSTALL_OPENEXR_EXAMPLES)
+  add_subdirectory( src/examples )
+endif()
+
+# If you want to use ctest to configure, build and
+# upload the results, cmake has builtin support for
+# submitting to CDash, or any server who speaks the
+# same protocol
+#
+# These settings will need to be set for your environment,
+# and then a script such as the example in
+#
+# cmake/SampleCTestScript.cmake
+#
+# edited and placed into the CI system, then run:
+#
+# cmake -S cmake/SampleCTestScript.cmake
+#
+# [or whatever you name the file you edit]
+#
+#set(CTEST_PROJECT_NAME "OpenEXR")
+#set(CTEST_NIGHTLY_START_TIME "01:01:01 UTC")
+#set(CTEST_DROP_METHOD "http") # there are others...
+#set(CTEST_DROP_SITE "open.cdash.org")
+#set(CTEST_DROP_LOCATION "/submit.php?project=MyProject")
+#set(CTEST_DROP_SITE_CDASH TRUE)
+include(CTest)
+
+if(BUILD_TESTING AND NOT OPENEXR_IS_SUBPROJECT)
+  enable_testing()
+  add_subdirectory(src/test)
+endif()
+
+# Including this module will add a `clang-format` target to the build if
+# the clang-format executable can be found. Only do this if we are top level
+if(NOT OPENEXR_IS_SUBPROJECT)
+  include(cmake/clang-format.cmake)
 endif()
